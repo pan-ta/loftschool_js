@@ -30,18 +30,10 @@ function returnFirstArgument(a) {
  Пример:
    sumWithDefaults(10) вернет 110
  */
-function sumWithDefaults(a, b) {
-    let result;
 
-    if (b === undefined) {
-        result = a+100;
-    } else {
-        result = a+b;
-    }
-
-    return result;
+function sumWithDefaults(a, b=100) { // es6
+    return a+b;
 }
-
 /*
  Задание 3:
 
@@ -50,10 +42,10 @@ function sumWithDefaults(a, b) {
  Пример:
    returnFnResult(() => 'привет') вернет 'привет'
  */
-function returnFnResult(fn, a, b) { // работает и в варианте без параметров, а вот как больше параметров?
-    return fn(a, b); 
-}
 
+function returnFnResult(fn) { 
+    return fn(); 
+}
 /*
  Задание 4:
 
@@ -68,22 +60,17 @@ function returnFnResult(fn, a, b) { // работает и в варианте �
    console.log(f()); // выведет 13
  */
 
-function returnCounter(number) { 
-    let newNumber;
-
-    if (number === undefined) {
-        newNumber = 0;
-    } else {
-        newNumber = number;
-    }
-    function F() {
-        newNumber++;
-        
-        return newNumber;
-    }
+function returnCounter(number=0) { 
     
+    function F() {
+        number++;
+
+        return number;
+    }
+
     return F;
 }
+
 /*
  Задание 5 *:
 
