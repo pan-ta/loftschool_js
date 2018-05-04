@@ -62,13 +62,10 @@ function returnFnResult(fn) {
 
 function returnCounter(number=0) { 
     
-    function F() {
-        number++;
+    return function() {
 
-        return number;
+        return ++number;
     }
-
-    return F;
 }
 
 /*
@@ -81,13 +78,16 @@ function returnCounter(number=0) {
    returnArgumentsArray(1, 2, 3) вернет [1, 2, 3]
  */
 
-function returnArgumentsArray(a, b, c) { // как записать все аргументы?
-    let newArr = [];
+function returnArgumentsArray() { 
+    const ArgumentsArray = [];
 
-    newArr.push(a, b, c); 
+    for (let arg of arguments) {
+        ArgumentsArray.push(arg);
+    }
     
-    return newArr;
+    return ArgumentsArray;
 }
+
 /*
  Задание 6 *:
 
@@ -104,8 +104,12 @@ function returnArgumentsArray(a, b, c) { // как записать все ар�
    console.log(newSum()) выведет 6
  */
 
-function bindFunction(fn, a, b, с) { // как записать все аргументы?
-    return (fn(a, b, с));
+function bindFunction(fn, ...arg) { 
+    
+    return function () {
+
+        return fn (...arg);
+    }
 }
 
 export {
