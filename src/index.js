@@ -47,7 +47,7 @@ function reduce(array, fn, initial) {
 
     for (let i = firstIndex; i < array.length; i++) {
         currentItem = array [i];
-        previousValue = fn(previousValue, currentItem);
+        previousValue = fn(previousValue, currentItem, i, array);
     }
 
     return previousValue;
