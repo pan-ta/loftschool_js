@@ -63,12 +63,15 @@ function reduce(array, fn, initial) {
  */
 
 function upperProps(obj) {
-    let myArr = Object.keys(obj);
+    
+    // return Object.keys(obj).map(function(item) {
+    //     return item.toUpperCase();
+    // })
 
-    return myArr.map(function(item) {
-        
-        return item.toUpperCase();
-    })
+    // const upperProps = (obj) => Object.keys().map((item) => item.toUpperCase());
+    // return upperProps;
+
+    return Object.keys(obj).map((item) => item.toUpperCase());
 }
 
 /*
