@@ -18,21 +18,20 @@
  */
 
 function isAllTrue(array, fn) {
-    if (Array.isArray(array) == false || array.length == 0) {
+    if (Array.isArray(array) === false || array.length === 0) {
         throw new Error ('empty array');
-    } else if (typeof fn != 'function') {
+    } else if (typeof fn !== 'function') {
         throw new Error ('fn is not a function');
     } else {
-        let isTrue = true; 
-
+        
         for (let i=0; i < array.length; i++) {
-            if (fn(array[i]) == false) {
-                isTrue = false;
-                break;
+            if (fn(array[i]) === false) {
+
+                return false;
             } 
         }
 
-        return isTrue;
+        return true;
     }
 }
 
@@ -60,21 +59,19 @@ function isAllTrue(array, fn) {
  */
 
 function isSomeTrue(array, fn) {
-    if (Array.isArray(array) == false || array.length == 0) {
+    if (Array.isArray(array) === false || array.length === 0) {
         throw new Error ('empty array');
-    } else if (typeof fn != 'function') {
+    } else if (typeof fn !== 'function') {
         throw new Error ('fn is not a function');
     } else {
-        let isTrue = false;
-
+        
         for (let i=0; i < array.length; i++) {
-            if (fn(array[i]) == true) {
-                isTrue = true;
-                break;
+            if (fn(array[i]) === true) {
+                return true;
             } 
         }
 
-        return isTrue;
+        return false;
     }
 }
 
@@ -146,46 +143,36 @@ function calculator(number=0) {
 
         return {
             objNumber: number,
+
             sum: function() {
-                let result = number;
-
-                for (let i=0; i < arguments.length; i++) {
-                    result = result + arguments[i];
-                }
-                
-                return result;
+                return [...arguments].reduce(function (previousValue, currentItem) {
+                    return previousValue + currentItem;
+                }, number);
             },
+
             dif: function() {
-                let result = number;
-
-                for (let i=0; i < arguments.length; i++) {
-                    result = result - arguments[i];
-                }
-
-                return result;
+                return [...arguments].reduce(function (previousValue, currentItem) {
+                    return previousValue - currentItem;
+                }, number);
             },
-            div: function() {
-                let result = number;
 
+            div: function() {
                 for (let i=0; i < arguments.length; i++) {
-                    if (arguments[i] == 0) {
+                    if (arguments[i] === 0) {
                         throw new Error ('division by 0');
-                    } else {
-                        result = result / arguments[i];
                     }
                 }
 
-                return result;
+                return [...arguments].reduce(function (previousValue, currentItem) {
+                    return (previousValue / currentItem);
+                }, number);
             },
+            
             mul: function() {
-                let result = number;
-                
-                for (let i=0; i < arguments.length; i++) {
-                    result = result * arguments[i];
-                }
-
-                return result;
-            },
+                return [...arguments].reduce(function (previousValue, currentItem) {
+                    return (previousValue * currentItem);
+                }, number);
+            }
         }
     }    
 }
@@ -193,7 +180,7 @@ function calculator(number=0) {
 // try {
 //     console.log (calculator(5).sum(2,10));
 //     console.log (calculator(7).dif(2,17));
-//     console.log (calculator(40).div(2,8));
+//     console.log (calculator(40).div(2,0));
 //     console.log (calculator(7).mul(2,20));
 //     console.log (calculator('ghb').mul(2,20));
 // } catch(e) {
