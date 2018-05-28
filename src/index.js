@@ -9,6 +9,9 @@
    delayPromise(3) // вернет promise, который будет разрешен через 3 секунды
  */
 function delayPromise(seconds) {
+    return new Promise (function(resolve) {
+        setTimeout (resolve, seconds*1000);
+    })
 }
 
 /*
@@ -25,7 +28,55 @@ function delayPromise(seconds) {
    loadAndSortTowns().then(towns => console.log(towns)) // должна вывести в консоль отсортированный массив городов
  */
 function loadAndSortTowns() {
+    const promise = new Promise((resolve) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+        xhr.send();
+        xhr.addEventListener('load', () => {
+            const towns = JSON.parse(xhr.responseText);
+
+            function compare(a, b) {
+                const townA = a.name;
+                const townB = b.name;
+                let comparison = 0;
+
+                if (townA > townB) {
+                    comparison = 1;
+                } else if (townA < townB) {
+                    comparison = -1;
+                }
+
+                return comparison;
+            }
+            towns.sort(compare);
+            resolve(towns);
+        })
+    })
+    return promise;
 }
+
+// если возвращать массив не из объектов, а только из названий:
+
+// function loadAndSortTowns() {
+//     const promise = new Promise((resolve) => {
+//         const xhr = new XMLHttpRequest();
+//         xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+//         xhr.send();
+//         xhr.addEventListener('load', () => {
+//             const townsObjArr = JSON.parse(xhr.responseText);
+//             console.log(townsObjArr);
+//             const towns = [];
+//             for (const townsObj of townsObjArr) {
+//                 towns.push(townsObj.name);
+//             }
+//             console.log(towns);
+//             towns.sort();
+//             console.log(towns);
+//             resolve(towns);
+//         })
+//     })
+//     return promise;
+// }
 
 export {
     delayPromise,

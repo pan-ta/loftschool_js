@@ -22,21 +22,45 @@
 
 /*
  homeworkContainer - это контейнер для всех ваших домашних заданий
- Если вы создаете новые html-элементы и добавляете их на страницу, то дабавляйте их только в этот контейнер
+ Если вы создаете новые html-элементы и добавляете их на страницу, то добавляйте их только в этот контейнер
 
  Пример:
    const newDiv = document.createElement('div');
    homeworkContainer.appendChild(newDiv);
  */
 const homeworkContainer = document.querySelector('#homework-container');
-
+const towns = [];
 /*
  Функция должна вернуть Promise, который должен быть разрешен с массивом городов в качестве значения
 
- Массив городов пожно получить отправив асинхронный запрос по адресу
+ Массив городов можно получить, отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    const promise = new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+        xhr.send();
+        xhr.addEventListener('load', () => {
+
+            if (xhr.status >= 400) {
+                console.log("ошибка загрузки с сервера");
+                reject("error"); //просто эррор как строка? потом это можно в аргумент?? типа так и делают?
+            } else {
+                const townsObjArr = JSON.parse(xhr.responseText);
+                console.log(townsObjArr);
+
+                for (const townsObj of townsObjArr) {
+                    towns.push(townsObj.name);
+                }
+                console.log(towns);
+                towns.sort();
+                console.log(towns);
+                resolve(towns); // а сюда переменная:/ оч странно
+            }
+        })
+    })
+    return promise;
 }
 
 /*
@@ -51,6 +75,44 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    const fullUpperCase = full.toUpperCase();
+    const chunkUpperCase = chunk.toUpperCase();
+
+    const fullArr = fullUpperCase.split("");
+    const chunkArr = chunkUpperCase.split("");
+    console.log(fullArr,chunkArr);
+    let isAny = false;
+    let isMatching = true;
+    let j;
+
+    for (j = 0; j < fullArr.length; j++) {
+        if (fullArr[j] === chunkArr[0]) {
+            console.log("совпала 1-я буква", fullArr[j],j);
+            isAny = true;
+            break;
+        }
+    }
+
+    console.log(isAny, j);
+        
+    if (isAny == true) {
+        for (let i = 0; i < chunkArr.length; i++) {
+            if (chunkArr[i] != fullArr[j]) {
+                console.log("не совпала буква", chunkArr[i]);
+                isMatching = false;
+                break;
+            } else {
+                console.log("совпала буква", chunkArr[i]);
+                j++;
+            }
+        }
+    } else {
+        isMatching = false;
+        console.log("не совпало ни одной буквы", chunk);
+    }
+    
+    console.log(isMatching);
+    return isMatching;
 }
 
 /* Блок с надписью "Загрузка" */
@@ -62,9 +124,35 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-filterInput.addEventListener('keyup', function() {
-    // это обработчик нажатия кливиш в текстовом поле
-});
+
+// const townList = document.createElement("ul");
+// townList.classList.add("town__list");
+// filterResult.appendChild(townList);
+
+
+// filterInput.addEventListener('keyup', function() {
+
+//     // for (const elem of townList.children) {
+//     //     elem.remove();
+//     // }
+
+//     while (townList.lastElementChild) {
+//         townList.removeChild(townList.lastElementChild);
+//     }
+
+
+
+//     const inputChunk = filterInput.value;
+
+//     for (const town of towns) {
+//         if (isMatching(town,inputChunk) == true) {
+//             const townItem = document.createElement("li");
+//             townItem.classList.add("town__item");
+//             townItem.textContent = town;
+//             townList.appendChild(townItem);
+//         }
+//     }
+// });
 
 export {
     loadTowns,
