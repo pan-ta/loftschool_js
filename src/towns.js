@@ -5,9 +5,9 @@
 
  При вводе в текстовое поле, под ним должен появляться список тех городов,
  в названии которых, хотя бы частично, есть введенное значение.
- Регистр символов учитываться не должен, то есть "Moscow" и "moscow" - одинаковые названия.
+ Регистр символов учитываться не должен, то есть 'Moscow' и 'moscow' - одинаковые названия.
 
- Во время загрузки городов, на странице должна быть надпись "Загрузка..."
+ Во время загрузки городов, на странице должна быть надпись 'Загрузка...'
  После окончания загрузки городов, надпись исчезает и появляется текстовое поле.
 
  Разметку смотрите в файле towns-content.hbs
@@ -16,7 +16,7 @@
 
  *** Часть со звездочкой ***
  Если загрузка городов не удалась (например, отключился интернет или сервер вернул ошибку),
- то необходимо показать надпись "Не удалось загрузить города" и кнопку "Повторить".
+ то необходимо показать надпись 'Не удалось загрузить города' и кнопку 'Повторить'.
  При клике на кнопку, процесс загруки повторяется заново
  */
 
@@ -29,39 +29,13 @@
    homeworkContainer.appendChild(newDiv);
  */
 const homeworkContainer = document.querySelector('#homework-container');
-const towns = [];
+
 /*
  Функция должна вернуть Promise, который должен быть разрешен с массивом городов в качестве значения
 
  Массив городов можно получить, отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-function loadTowns() {
-    const promise = new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
-        xhr.send();
-        xhr.addEventListener('load', () => {
-
-            if (xhr.status >= 400) {
-                console.log("ошибка загрузки с сервера");
-                reject("error"); //просто эррор как строка? потом это можно в аргумент?? типа так и делают?
-            } else {
-                const townsObjArr = JSON.parse(xhr.responseText);
-                console.log(townsObjArr);
-
-                for (const townsObj of townsObjArr) {
-                    towns.push(townsObj.name);
-                }
-                console.log(towns);
-                towns.sort();
-                console.log(towns);
-                resolve(towns); // а сюда переменная:/ оч странно
-            }
-        })
-    })
-    return promise;
-}
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
@@ -74,48 +48,8 @@ function loadTowns() {
    isMatching('Moscow', 'SCO') // true
    isMatching('Moscow', 'Moscov') // false
  */
-function isMatching(full, chunk) {
-    const fullUpperCase = full.toUpperCase();
-    const chunkUpperCase = chunk.toUpperCase();
 
-    const fullArr = fullUpperCase.split("");
-    const chunkArr = chunkUpperCase.split("");
-    console.log(fullArr,chunkArr);
-    let isAny = false;
-    let isMatching = true;
-    let j;
-
-    for (j = 0; j < fullArr.length; j++) {
-        if (fullArr[j] === chunkArr[0]) {
-            console.log("совпала 1-я буква", fullArr[j],j);
-            isAny = true;
-            break;
-        }
-    }
-
-    console.log(isAny, j);
-        
-    if (isAny == true) {
-        for (let i = 0; i < chunkArr.length; i++) {
-            if (chunkArr[i] != fullArr[j]) {
-                console.log("не совпала буква", chunkArr[i]);
-                isMatching = false;
-                break;
-            } else {
-                console.log("совпала буква", chunkArr[i]);
-                j++;
-            }
-        }
-    } else {
-        isMatching = false;
-        console.log("не совпало ни одной буквы", chunk);
-    }
-    
-    console.log(isMatching);
-    return isMatching;
-}
-
-/* Блок с надписью "Загрузка" */
+/* Блок с надписью 'Загрузка' */
 const loadingBlock = homeworkContainer.querySelector('#loading-block');
 /* Блок с текстовым полем и результатом поиска */
 const filterBlock = homeworkContainer.querySelector('#filter-block');
@@ -124,35 +58,172 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
+function loadTowns() {
+    const promise = new Promise((resolve, reject) => {
 
-// const townList = document.createElement("ul");
-// townList.classList.add("town__list");
-// filterResult.appendChild(townList);
+        const xhr = new XMLHttpRequest();
 
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+        xhr.send();
+        xhr.addEventListener('load', () => {
 
-// filterInput.addEventListener('keyup', function() {
+            function compare(a, b) {
+                let comparison = 0;
 
-//     // for (const elem of townList.children) {
-//     //     elem.remove();
-//     // }
+                if (a.name > b.name) {
+                    comparison = 1;
+                } else if (a.name < b.name) {
+                    comparison = -1;
+                }
 
-//     while (townList.lastElementChild) {
-//         townList.removeChild(townList.lastElementChild);
-//     }
+                return comparison;
+            }
 
+            if (xhr.status >= 400) {
+                console.log('ошибка загрузки с сервера');
+                reject('error');
+            } else {
+                const towns = JSON.parse(xhr.responseText);
 
+                towns.sort(compare);
+                resolve(towns);
+            }
+        })
+    })
 
-//     const inputChunk = filterInput.value;
+    return promise;
+}
 
-//     for (const town of towns) {
-//         if (isMatching(town,inputChunk) == true) {
-//             const townItem = document.createElement("li");
-//             townItem.classList.add("town__item");
-//             townItem.textContent = town;
-//             townList.appendChild(townItem);
-//         }
-//     }
-// });
+loadTowns()
+    .then(
+        result => {
+            ifLoaded(result);
+            
+        })
+    .catch(
+        error => {
+            ifNotLoaded();
+        })
+
+function ifLoaded (a) {
+    loadingBlock.style.display = 'none';
+    filterBlock.style.display = 'initial';
+    
+    const townList = document.createElement('ul');
+
+    townList.classList.add('town__list');
+    filterResult.appendChild(townList);
+
+    filterInput.addEventListener('keyup', function() {
+
+        while (townList.lastElementChild) {
+            townList.removeChild(townList.lastElementChild);
+        }
+
+        const inputChunk = filterInput.value;
+        const towns = a;
+
+        for (const town of towns) {
+            if (isMatching(town.name, inputChunk) === true) {
+                const townItem = document.createElement('li');
+
+                townItem.classList.add('town__item');
+                townItem.textContent = town.name;
+                townList.appendChild(townItem);
+            }
+        }
+    });
+}
+
+function ifNotLoaded() {
+    loadingBlock.style.display = 'none';
+    const tryAgainBlock = document.createElement('div');
+
+    tryAgainBlock.classList.add('try-again');
+    homeworkContainer.appendChild(tryAgainBlock);
+
+    const errorMessage = document.createElement('div');
+
+    errorMessage.classList.add('try-again__message');
+    errorMessage.textContent = 'Не удалось загрузить города';
+    tryAgainBlock.appendChild(errorMessage);
+
+    const tryAgainButton = document.createElement('button');
+
+    tryAgainButton.classList.add('try-again__button');
+    tryAgainButton.textContent = 'Повторить';
+    tryAgainBlock.appendChild(tryAgainButton);
+
+    function loadAgain () {
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+        xhr.send();
+        xhr.addEventListener('load', () => {
+
+            function compare(a, b) {
+                let comparison = 0;
+
+                if (a.name > b.name) {
+                    comparison = 1;
+                } else if (a.name < b.name) {
+                    comparison = -1;
+                }
+                
+                return comparison;
+            }
+
+            if (xhr.status >= 400) {
+                console.log('ошибка загрузки с сервера');
+            } else {
+                const towns = JSON.parse(xhr.responseText);
+
+                towns.sort(compare);
+                
+                tryAgainBlock.style.display = 'none';
+                filterBlock.style.display = 'initial';
+            }
+        })
+    }
+
+    tryAgainButton.addEventListener ('click', loadAgain);
+}
+
+function isMatching(full, chunk) {
+
+    const fullUpperCase = full.toUpperCase();
+    const chunkUpperCase = chunk.toUpperCase();
+
+    const fullArr = fullUpperCase.split('');
+    const chunkArr = chunkUpperCase.split('');
+
+    let isAny = false;
+    let isMatching = true;
+    let j;
+
+    for (j = 0; j < fullArr.length; j++) {
+        if (fullArr[j] === chunkArr[0]) {
+            isAny = true;
+            break;
+        }
+    }
+        
+    if (isAny == true) {
+        for (let i = 0; i < chunkArr.length; i++) {
+            if (chunkArr[i] != fullArr[j]) {
+                isMatching = false;
+                break;
+            } else {
+                j++;
+            }
+        }
+
+    } else {
+        isMatching = false;
+    }
+    
+    return isMatching;
+}
 
 export {
     loadTowns,
