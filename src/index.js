@@ -9,8 +9,8 @@
    delayPromise(3) // вернет promise, который будет разрешен через 3 секунды
  */
 function delayPromise(seconds) {
-    return new Promise (function(resolve) {
-        setTimeout (resolve, seconds*1000);
+    return new Promise(resolve => {
+        setTimeout(resolve, seconds * 1000);
     })
 }
 
@@ -29,33 +29,20 @@ function delayPromise(seconds) {
  */
 
 function loadAndSortTowns() {
-    const promise = new Promise((resolve) => {
-        const xhr = new XMLHttpRequest();
 
-        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
-        xhr.send();
-        xhr.addEventListener('load', () => {
-            const towns = JSON.parse(xhr.responseText);
+    function compare(a, b) {
+        return a.name.localeCompare(b.name);
+    }
 
-            function compare(a, b) {
-                let comparison = 0;
-
-                if (a.name > b.name) {
-                    comparison = 1;
-                } else if (a.name < b.name) {
-                    comparison = -1;
-                }
-                
-                return comparison;
-            }
-
-            towns.sort(compare); 
-            resolve(towns);
+    const promise = fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
+        .then(response => {
+            return response.json()
+        }).then(json => {
+            return json.sort(compare);
         })
-    })
 
     return promise;
-}
+} 
 
 export {
     delayPromise,
