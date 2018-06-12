@@ -127,6 +127,8 @@ function deleteTextNodes(where) {
     }
 }
 
+
+
 /*
  Задание 6:
 
@@ -168,6 +170,55 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+    const DOMStat = {tags: {}, classes: {}, texts: 0};
+
+    function processElem(elem) {
+
+        if (elem.nodeType === 3) {
+            DOMStat.texts ++;
+
+        } else if (elem.nodeType === 1) { 
+            let tag = elem.tagName;
+
+            if (tag in DOMStat.tags) {
+                // console.log("содержит:", tag);
+                DOMStat.tags[tag] ++;
+
+            } else {
+                // console.log("не содержит:", tag);
+                DOMStat.tags[tag] = 1;
+            }
+
+            if (elem.className !== "") {
+                // console.log("есть класс");
+                let elemClasses = elem.className.split(' ');
+
+                for(let elemClass of elemClasses) {
+                    if (`${elemClass}` in DOMStat.classes) {
+                        // console.log("содержит:", elemClass);
+                        DOMStat.classes[`${elemClass}`] ++;
+    
+                    } else {
+                        // console.log("не содержит:", elemClass);
+                        DOMStat.classes[`${elemClass}`] = 1;
+                    }
+                }
+            }
+
+            if(elem.childNodes) {
+                for (let elemChild of elem.childNodes) {
+                    processElem(elemChild);
+                }
+            }
+        }
+    }
+
+    for (let elem of root.childNodes) {
+        processElem(elem);
+    }
+        
+    // console.log(DOMStat);
+    return DOMStat;
 }
 
 /*
