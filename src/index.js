@@ -82,6 +82,10 @@ function upperProps(obj) {
  */
 
 function slice(array, from, to) {
+    if (to === undefined && from === undefined) {
+        return array;
+    }
+
     const newArr = [];
     let From;
     let To;
@@ -96,7 +100,9 @@ function slice(array, from, to) {
         To = to;
     }
 
-    if (from < 0) {
+    if (from === undefined) {
+        From = 0;
+    } else if (from < 0) {
         if (-from > array.length) {
             From = 0;
         } else {
